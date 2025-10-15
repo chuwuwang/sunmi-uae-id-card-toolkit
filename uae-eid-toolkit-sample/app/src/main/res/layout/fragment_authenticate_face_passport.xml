@@ -1,0 +1,144 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorReadPublicDataBG"
+        android:gravity="center"
+        android:text="Please enter passport details to authenticate face"
+        android:textColor="@color/colorReadPublicDataAccent"
+        android:textSize="20dp"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/txt_passport_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Passport Number"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/edt_passport_number"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/back_edt_txt"
+        android:padding="8dp"
+        android:textSize="16dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="48dp"
+        android:inputType="text"
+        android:hint="Passport Number"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/txt_passport_country_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Country Code"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/edt_passport_country_code"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/back_edt_txt"
+        android:padding="8dp"
+        android:textSize="16dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="48dp"
+        android:inputType="text"
+        android:hint="Country Code"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/txt_passport_expiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Passport Expiry Date"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/edt_passport_expiry"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/back_edt_txt"
+        android:padding="8dp"
+        android:textSize="16dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="48dp"
+        android:inputType="text"
+        android:hint="Passport Expiry Date (yyyy-MM-dd)"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:maxLines="1"/>
+
+
+    <TextView
+        android:id="@+id/txt_passport_dob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Date of Birth"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/edt_passport_dob"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/back_edt_txt"
+        android:padding="8dp"
+        android:textSize="16dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="48dp"
+        android:inputType="text"
+        android:hint="Date of Birth (yyyy-MM-dd)"
+        android:textColor="@color/colorRegisterDeviceAccent"
+        android:maxLines="1"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Capture face"
+        android:background="@drawable/normal_button_bg"
+        android:textColor="@color/colorReadPublicDataAccent"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:id="@+id/btn_capture_face"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/tv_capture_face"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textSize="18sp" />
+
+</LinearLayout>

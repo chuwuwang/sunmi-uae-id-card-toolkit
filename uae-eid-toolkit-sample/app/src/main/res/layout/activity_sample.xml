@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/other_screen_bg"
+    android:orientation="vertical"
+    tools:context=".WelcomeActivity">
+
+    <!--android:background="#55FCF8F8"-->
+
+    <ImageView
+        android:id="@+id/txtReadData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/header"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/extra_margin_xxxxx_large">
+
+            <ImageView
+                android:id="@+id/img_card_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/card_bg"/>
+
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/extra_margin_xxx_large"
+                android:background="@drawable/next_button_bg"
+                android:text="Next"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingRight="@dimen/padding_x_small"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_large" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/buttonSettings"
+            android:layout_width="@dimen/extra_margin_xxxx_large"
+            android:layout_height="@dimen/extra_margin_xxxx_large"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/fab_setting_bg"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
+

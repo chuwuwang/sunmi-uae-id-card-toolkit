@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+
+    tools:context=".fragment.HomeFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ica_logo"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:orientation="horizontal">
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="Initialize"
+            android:enabled="false"
+            android:background="@drawable/btn_selector"
+            android:textColor="#FFFFFF"
+            android:id="@+id/btn_initalize"
+            android:layout_marginRight="4dp"
+            android:padding="8dp"
+            android:layout_gravity="center_horizontal" />
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:text="Disconnect"
+            android:enabled="false"
+            android:background="@drawable/btn_selector"
+            android:textColor="#FFFFFF"
+            android:id="@+id/btn_verify"
+            android:padding="8dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:minHeight="72dp"
+        android:typeface="monospace"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#5580b1e1"
+        android:id="@+id/textView"
+        android:text="\n
+1).This is sample application using the EIDACardSDK.\n
+\n
+2).This is use the bluetooth reader for reading smart card and finger print.\n
+3).This app will use certain permission\n
+	I)Bluetooth\n
+	II)Internet\n
+	III)Read/Write External Storage.\n
+4).Please ensure that the your device has  proper internet connection and make sure your bluetooth is on.\n
+\n
+5).This will require the bluetooth device to be paired from the default bluetooth application in android.\n
+\n
+6).Please close the bluetooth after exiting the app to save your valuable battery.\n
+
+ "
+        android:layout_gravity="center" />
+
+</LinearLayout>
