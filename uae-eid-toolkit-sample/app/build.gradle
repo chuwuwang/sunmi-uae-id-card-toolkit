@@ -3,15 +3,18 @@ apply plugin: 'com.android.application'
 android {
     compileSdk 28
     buildToolsVersion '25.0.2'
-
     defaultConfig {
         applicationId "ae.emiratesid.idcard.toolkit.sample"
         minSdk 25
         targetSdk 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.4"
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -59,45 +62,47 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:design:26.0.0'
     implementation 'com.android.support:cardview-v7:26.0.0'
     implementation 'com.android.support:appcompat-v7:26.0.0'
     implementation 'com.android.support:support-v4:26.0.0'
-    implementation 'com.android.support:design:26.0.0'
+
     implementation 'com.madgag.spongycastle:core:1.54.0.0'
     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
     implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
     implementation 'com.madgag.spongycastle:pg:1.54.0.0'
-    implementation project(':ocr-reader-release')
+
     implementation 'com.rmtheis:tess-two:6.0.4'
-    implementation project(':EIDAToolkit')
-    implementation project(':xmlsec2-release')
-    implementation project(':dttface-release')
+
+    // implementation project(':EIDAToolkit')
+    // implementation project(':ocr-reader-release')
+    // implementation project(':xmlsec2-release')
+    // implementation project(':dttface-release')
 
     // feitian-plugin-release'
     //implementation project(':feitian-plugin-release')
 
     // nfcreader-plugin-release'
-    implementation project(':nfcreader-plugin-release')
+    // implementation project(':nfcreader-plugin-release')
 
     // morpho-plugin-release
     //implementation project(':morpho-plugin-release')
 
     // acs-plugin-release
-    implementation project(':acs-plugin-release')
+    // implementation project(':acs-plugin-release')
 
-    //telpo-plugin-release
-    //implementation project(':tps360-plugin-release')
-    //implementation project(':libBioMini_v20')
+    // telpo-plugin-release
+    // implementation project(':tps360-plugin-release')
+    // implementation project(':libBioMini_v20')
 
     // gen2wave-plugin-release
-    //implementation project(':gen2wave-plugin-release')
+    // implementation project(':gen2wave-plugin-release')
 
     // gen2waverp70a-plugin-release
-    //implementation project(':gen2waverp70a-plugin-release')
-    //implementation project(':libBioMini_v20')
+    // implementation project(':gen2waverp70a-plugin-release')
+    // implementation project(':libBioMini_v20')
 
     // idt-plugin-identos
 //    implementation project(':idt-plugin-identos')
@@ -106,32 +111,33 @@ dependencies {
 //    implementation ('net.java.dev.jna:jna:5.2.0@aar')
 
     // grabba-plugin-release
-    //implementation project(':grabba-plugin-release')
-    //implementation project(':grabba-interfaces-release')
-    //implementation project(':grabba-sdk-release')
+    // implementation project(':grabba-plugin-release')
+    // implementation project(':grabba-interfaces-release')
+    // implementation project(':grabba-sdk-release')
 
-	// artisecure-suprema-plugin-fingerprint
-    //implementation project(':artisecure-suprema-plugin-fingerprint')
-    //implementation project(':libBioMini_v20')
-	
-	// artisecure-plugin-smartcard
-	//implementation project(':artisecure-plugin-smartcard')
-	
-	// dsap-biopos-plugin-release
-	//implementation project(':dsap-biopos-plugin-release')
+    // artisecure-suprema-plugin-fingerprint
+    // implementation project(':artisecure-suprema-plugin-fingerprint')
+    // implementation project(':libBioMini_v20')
+
+    // artisecure-plugin-smartcard
+    // implementation project(':artisecure-plugin-smartcard')
+
+    // dsap-biopos-plugin-release
+    // implementation project(':dsap-biopos-plugin-release')
 
     // wcts8-plugin-release
-    //implementation project(':wcts8-plugin-release')
-    //implementation project(':ptapi-release')
-    //implementation 'org.slf4j:slf4j-api:1.7.21'
-	
-	// idscreen-plugin-release
-    //implementation project(':idscreen-plugin-release')
-    //implementation project(':libsmartcard')
+    // implementation project(':wcts8-plugin-release')
+    // implementation project(':ptapi-release')
+    // implementation 'org.slf4j:slf4j-api:1.7.21'
 
-    //implementation project(':paysky-plugin-release')
-    //implementation project(':FingerPrintLib_v1.0.9')
+    // idscreen-plugin-release
+    // implementation project(':idscreen-plugin-release')
+    // implementation project(':libsmartcard')
 
-    implementation 'io.fotoapparat:fotoapparat:2.7.0'
+    // implementation project(':paysky-plugin-release')
+    // implementation project(':FingerPrintLib_v1.0.9')
+
     implementation 'androidx.core:core-ktx:1.6.0'
+    // implementation 'org.apache.santuario:xmlsec:3.0.3'
+    // implementation 'io.fotoapparat:fotoapparat:2.7.0'
 }
