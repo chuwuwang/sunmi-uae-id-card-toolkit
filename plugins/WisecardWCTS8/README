@@ -1,0 +1,10 @@
+ICA Toolkit Android Plugin :
+Device Plugin for Wisecard WCTS8 Handheld Devices
+
+This is a combi plugin for this device with Smarcard and Fingerprint Support.
+
+Supported Android Application Binary Interfaces (ABIs) for WCTS8 Device:
+	1.armeabi-v7a
+	
+Dependencies:
+ptapi-release.aar

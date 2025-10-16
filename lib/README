@@ -1,0 +1,7 @@
+ICA Toolkit SDK :
+Toolkit SDK for Android
+
+Supported Android Application Binary Interfaces (ABIs):
+	1.armeabi
+	2.armeabi-v7a
+	3.arm64-v8a

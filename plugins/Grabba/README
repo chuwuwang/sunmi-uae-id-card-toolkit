@@ -1,0 +1,12 @@
+ICA Toolkit Android Plugin :
+Device Smartcard and Fingerprint Plugins for Grabba S Series Jacket and Usb interface device
+
+Supported Android Application Binary Interfaces (ABIs):
+	1.armeabi-v7a
+	2.arm64-v8a
+	3.x86
+	4.x86_64
+
+Dependencies:
+grabba-interfaces-release.aar
+grabba-sdk-release.aar
