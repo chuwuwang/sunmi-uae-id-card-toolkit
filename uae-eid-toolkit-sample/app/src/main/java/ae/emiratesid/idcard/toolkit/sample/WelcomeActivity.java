@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.innovatrics.dot.core.DotLibrary;
 import com.innovatrics.dot.core.license.Dot;
+import com.sunmi.eid_plugin.utils.LogUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,8 +43,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        LogUtil.LEVEL = Log.VERBOSE;
         setContentView(R.layout.activity_sample);
         btnReadData = (Button) findViewById(R.id.button);
         btnReadData.setOnClickListener(this);
