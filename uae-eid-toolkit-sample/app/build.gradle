@@ -1,15 +1,39 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+
+    id 'kotlin-android-extensions'
+
+    id 'kotlin-kapt'
+
+    id "androidx.navigation.safeargs"
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jlleitschuh.gradle.ktlint'
+}
 
 android {
-    compileSdk 28
-    buildToolsVersion '25.0.2'
+    namespace 'ae.emiratesid.idcard.toolkit.sample'
+    compileSdk 34
+    buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "ae.emiratesid.idcard.toolkit.sample"
-        minSdk 25
-        targetSdk 28
-        versionCode 4
-        versionName "1.4"
+        minSdk 29
+        targetSdk 33
+        versionCode 3
+        versionName "1.3"
+        multiDexEnabled true
     }
+//    signingConfigs {
+//        release {
+//            keyAlias 'key0'
+//            keyPassword '123456'
+//            storeFile file('D:\\Toolkit\\2.0.6-r1\\PayskyKeyStore\\payskykey.jks')
+//            storePassword '123456'
+//            //Enable V1 signing
+//            v1SigningEnabled true
+//            v2SigningEnabled false
+//        }
+//    }
     buildTypes {
         debug {
             minifyEnabled false
@@ -17,9 +41,11 @@ android {
         }
         release {
             minifyEnabled false
+            // signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     splits {
 
         // Configures multiple APKs based on ABI.
@@ -35,66 +61,72 @@ android {
             reset()
 
             // Specifies a list of ABIs that Gradle should create APKs for.
-            //include "armeabi"/*,"armeabi-v7a","arm64-v8a"*/
+            // include "armeabi"/*,"armeabi-v7a","arm64-v8a"*/
             include "armeabi-v7a"
-            //include "arm64-v8a"
+            // include "arm64-v8a"
 
             // Specifies that we do not want to also generate a universal APK that includes all ABIs.
             universalApk false
         }
     }
 
-//    packagingOptions {
-//        //exclude 'AndroidManifest.xml'
-//        //pickFirst 'lib/arm64-v8a/libc++_shared.so'
-//        pickFirst 'lib/armeabi-v7a/libncnn.so'
-//        pickFirst 'lib/armeabi-v7a/libTrustFingerAlg.so'
-//        pickFirst 'lib/armeabi-v7a/libopencv_java3.so'
-//        pickFirst 'lib/armeabi-v7a/libTrustFinger.so'
-//        pickFirst 'lib/armeabi-v7a/libAratekfingerpld.so'
-//        pickFirst 'lib/armeabi-v7a/libwsq.so'
-//        pickFirst 'lib/armeabi-v7a/libnfiq.so'
-//    }
-
-//    packagingOptions {
-//        pickFirst 'lib/armeabi-v7a/libopencv_java3.so'
-//    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+    packagingOptions {
+        exclude 'AndroidManifest.xml'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
     implementation 'com.android.support:design:26.0.0'
+    implementation 'com.android.support:support-v4:26.0.0'
     implementation 'com.android.support:cardview-v7:26.0.0'
     implementation 'com.android.support:appcompat-v7:26.0.0'
-    implementation 'com.android.support:support-v4:26.0.0'
 
+    implementation 'com.madgag.spongycastle:pg:1.54.0.0'
     implementation 'com.madgag.spongycastle:core:1.54.0.0'
     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
     implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
-    implementation 'com.madgag.spongycastle:pg:1.54.0.0'
 
     implementation 'com.rmtheis:tess-two:6.0.4'
 
-    // implementation project(':EIDAToolkit')
-    // implementation project(':ocr-reader-release')
-    // implementation project(':xmlsec2-release')
-    // implementation project(':dttface-release')
+    implementation project(':EIDAToolkit')
+    implementation project(':ocr-reader-release')
+    implementation project(':xmlsec2-release')
+
+    // omapossc-plugin-release
+    // implementation project(':omapossc-plugin-release')
 
     // feitian-plugin-release'
-    //implementation project(':feitian-plugin-release')
+    // implementation project(':feitian-plugin-release')
 
     // nfcreader-plugin-release'
-    // implementation project(':nfcreader-plugin-release')
+    implementation project(':nfcreader-plugin-release')
 
     // morpho-plugin-release
-    //implementation project(':morpho-plugin-release')
+    // implementation project(':morpho-plugin-release')
 
     // acs-plugin-release
     // implementation project(':acs-plugin-release')
 
+    // gripid-fingerprint-sensor-plugin-release
+    // implementation project(':gripid-fingerprint-sensor-plugin-release')
+
     // telpo-plugin-release
     // implementation project(':tps360-plugin-release')
+
     // implementation project(':libBioMini_v20')
 
     // gen2wave-plugin-release
@@ -105,10 +137,10 @@ dependencies {
     // implementation project(':libBioMini_v20')
 
     // idt-plugin-identos
-//    implementation project(':idt-plugin-identos')
-//    implementation project(':idt-pcsc-driver-release')
-//    implementation project(':idt-tactivo-driver-release')
-//    implementation ('net.java.dev.jna:jna:5.2.0@aar')
+    // implementation project(':idt-plugin-identos')
+    // implementation project(':idt-pcsc-driver-release')
+    // implementation project(':idt-tactivo-driver-release')
+    // implementation ('net.java.dev.jna:jna:5.2.0@aar')
 
     // grabba-plugin-release
     // implementation project(':grabba-plugin-release')
@@ -137,7 +169,31 @@ dependencies {
     // implementation project(':paysky-plugin-release')
     // implementation project(':FingerPrintLib_v1.0.9')
 
-    implementation 'androidx.core:core-ktx:1.6.0'
-    // implementation 'org.apache.santuario:xmlsec:3.0.3'
+    implementation 'com.itextpdf:itextg:5.5.10'
     // implementation 'io.fotoapparat:fotoapparat:2.7.0'
+
+    implementation "androidx.core:core-ktx:1.8.0"
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+
+    /*Dot Face SDK*/
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+
+    implementation "com.innovatrics.dot:dot-face-detection-balanced:$dotVersion"
+    implementation "com.innovatrics.dot:dot-face-expression-neutral:$dotVersion"
+    implementation "com.innovatrics.dot:dot-face-passive-liveness:$dotVersion"
+
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
+
+    // ssp and sdp
+    implementation 'com.intuit.ssp:ssp-android:1.1.0'
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
+}
+
+ktlint {
+    android = true
 }

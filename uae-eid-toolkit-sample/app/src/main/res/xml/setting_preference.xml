@@ -12,7 +12,7 @@
             android:dialogTitle="Test Address"
             android:inputType="textPersonName"
             android:textColor="@color/colorPrimaryDark"
-            android:hint="00.00.00.00:0000"/>
+            android:text="00.00.00.00:0000"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

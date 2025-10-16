@@ -1,5 +1,6 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
+import android.nfc.Tag;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
@@ -11,6 +12,7 @@ import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
 import ae.emiratesid.idcard.toolkit.sample.utils.CryptoUtils;
+import ae.emiratesid.idcard.toolkit.sample.utils.NFCCardParams;
 import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
 public class PKIAuthAsync extends AsyncTask<Void, Integer, Integer> {
@@ -21,16 +23,35 @@ public class PKIAuthAsync extends AsyncTask<Void, Integer, Integer> {
     private String message;
     private final String PIN;
 
+    private Tag tag;
+    private String cardNumber, dob, expiryDate;
+
     public PKIAuthAsync(final String PIN, PKIAuthListener listener) {
         this.weakReference = new WeakReference<PKIAuthListener>(listener);
         this.PIN = PIN;
     }//PKIAuthAsync
 
+    public PKIAuthAsync(final String PIN, PKIAuthListener listener, Tag tag) {
+
+        this.weakReference = new WeakReference<PKIAuthListener>(listener);
+        this.PIN = PIN;
+        this.tag = tag;
+        this.cardNumber = NFCCardParams.CARD_NUMBER;
+        this.dob = NFCCardParams.DOB;
+        this.expiryDate = NFCCardParams.EXPIRY_DATE;
+    }
+
     @Override
     protected Integer doInBackground(Void... voids) {
         //check for the parameters
         try {
-            cardReader = ConnectionController.getConnection();
+            if (tag != null) {
+                cardReader = ConnectionController.initConnection(tag);
+                ConnectionController.setNFCParams(cardNumber, dob, expiryDate);
+            } else {
+                cardReader = ConnectionController.getConnection();
+            }
+
             if (cardReader == null) {
                 return Constants.ERROR;
             }//
@@ -81,7 +102,7 @@ public class PKIAuthAsync extends AsyncTask<Void, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer status) {
         super.onPostExecute(status);
-        weakReference.get().onPKIAuth(this.status, message, this.xmlResponse);
+        weakReference.get().onPKIAuth(status, message, xmlResponse);
     }
 
     public interface PKIAuthListener {

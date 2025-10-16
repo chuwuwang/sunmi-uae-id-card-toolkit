@@ -1,5 +1,6 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
+import android.nfc.Tag;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
@@ -11,32 +12,53 @@ import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
 import ae.emiratesid.idcard.toolkit.sample.utils.CryptoUtils;
+import ae.emiratesid.idcard.toolkit.sample.utils.NFCCardParams;
 import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
-public class SignDataAsync extends AsyncTask<Void  , Integer , Integer> {
+public class SignDataAsync extends AsyncTask<Void, Integer, Integer> {
     private CardReader cardReader;
     private int status;
     private WeakReference<SignDataListener> weakReference;
 
-    private byte[]  plainData;
+    private byte[] plainData;
     final String USER_PIN;
     private int certificateType;
     private byte[] signedData;
     private String message;
 
-    public SignDataAsync(String USER_PIN, byte[] plainData, int certificateType, SignDataListener  listener) {
+    private Tag tag;
+    private String cardNumber, dob, expiryDate;
+
+    public SignDataAsync(String USER_PIN, byte[] plainData, int certificateType, SignDataListener listener) {
         this.USER_PIN = USER_PIN;
         this.plainData = plainData;
         this.certificateType = certificateType;
         this.weakReference = new WeakReference<SignDataListener>(listener);
     }
 
+    public SignDataAsync(String USER_PIN, byte[] plainData, int certificateType, SignDataListener listener, Tag tag) {
+        this.USER_PIN = USER_PIN;
+        this.plainData = plainData;
+        this.certificateType = certificateType;
+        this.weakReference = new WeakReference<SignDataListener>(listener);
+        this.tag = tag;
+        this.cardNumber = NFCCardParams.CARD_NUMBER;
+        this.dob = NFCCardParams.DOB;
+        this.expiryDate = NFCCardParams.EXPIRY_DATE;
+    }
+
     @Override
-    protected Integer doInBackground(Void ... params) {
+    protected Integer doInBackground(Void... params) {
         //check for the parameters
         try {
-            cardReader = ConnectionController.getConnection();
-            if(cardReader == null){
+            if (tag != null) {
+                cardReader = ConnectionController.initConnection(tag);
+                ConnectionController.setNFCParams(cardNumber, dob, expiryDate);
+            } else {
+                cardReader = ConnectionController.getConnection();
+            }
+
+            if (cardReader == null) {
                 return Constants.ERROR;
             }
 
@@ -59,11 +81,10 @@ public class SignDataAsync extends AsyncTask<Void  , Integer , Integer> {
 
             // call
             SignatureResponse response = null;
-            if(certificateType == Constants.SIGN_CERT){
-                response =  cardReader.signData(plainData , false , encodedPin);
-            }
-            else{
-                response =  cardReader.signChallenge(plainData , false , encodedPin);
+            if (certificateType == Constants.SIGN_CERT) {
+                response = cardReader.signData(plainData, false, encodedPin);
+            } else {
+                response = cardReader.signChallenge(plainData, false, encodedPin);
             }
             signedData = response.getSignature();
         } catch (ToolkitException e) {
@@ -74,21 +95,21 @@ public class SignDataAsync extends AsyncTask<Void  , Integer , Integer> {
                 message = e.getMessage();
             }
             status = (int) e.getCode();
-        } catch( Exception e ){
-           message =  e.getLocalizedMessage();
-            status =  Constants.ERROR;
+        } catch (Exception e) {
+            message = e.getLocalizedMessage();
+            status = Constants.ERROR;
         }// catch()
-        return  status;
+        return status;
     }//doInBackground()
 
 
     @Override
     protected void onPostExecute(Integer status) {
         super.onPostExecute(status);
-        weakReference.get().onDataSigned(this.status , message ,signedData);
+        weakReference.get().onDataSigned(this.status, message, signedData);
     }
 
-    public interface SignDataListener{
+    public interface SignDataListener {
         void onDataSigned(int status, String message, byte data[]);
     }
 }

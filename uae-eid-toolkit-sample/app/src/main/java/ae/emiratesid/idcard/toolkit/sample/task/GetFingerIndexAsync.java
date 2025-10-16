@@ -28,8 +28,7 @@ public class GetFingerIndexAsync extends AsyncTask<String , Integer , Integer> {
 
     public GetFingerIndexAsync(GetFingerIndexListener  listener,
                                Tag tag) {
-
-        this(listener);
+        this.weakReference = new WeakReference<GetFingerIndexListener>(listener);
         this.tag = tag;
         this.cardNumber = NFCCardParams.CARD_NUMBER;
         this.dob = NFCCardParams.DOB;

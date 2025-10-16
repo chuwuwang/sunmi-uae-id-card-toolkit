@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Register Device"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="24dp"
         android:textStyle="bold"
         android:textAlignment="center"

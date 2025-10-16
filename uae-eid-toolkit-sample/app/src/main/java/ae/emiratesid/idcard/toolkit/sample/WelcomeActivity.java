@@ -6,15 +6,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.innovatrics.dot.core.DotLibrary;
+import com.innovatrics.dot.core.license.Dot;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,11 +50,21 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         btnSettings.setOnClickListener(this);
         org.apache.xml.security.Init.init(this);
         //check the API Version for runtime permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             //call check permission
             checkPermissions(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_PHONE_STATE);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            checkPermissions(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_PHONE_STATE);
+            //call check permission
+            if (!Environment.isExternalStorageManager()) {
+                Snackbar.make(findViewById(android.R.id.content), "Permission needed!", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Settings", new MyClickHandler(this)).show();
+            }
         } else {
             //call the code as it is below Android M
             init();
@@ -61,11 +79,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             for (String name : list) {
                 Logger.d(name);
             }//for
-        }
-        else{
+        } else {
             Logger.e("Libs is empty");
         }
-
     }//onCreate()
 
     @Override
@@ -192,4 +208,26 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             out.write(buffer, 0, read);
         }//while
     }//copyFile
+
+    private class MyClickHandler implements View.OnClickListener {
+        Activity activity;
+
+        public MyClickHandler(WelcomeActivity welcomeActivity) {
+            this.activity = welcomeActivity;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.R)
+        @Override
+        public void onClick(View v) {
+            try {
+                Uri uri = Uri.parse("package:" + getApplicationContext().getApplicationInfo().packageName);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                activity.startActivity(intent);
+            } catch (Exception ex) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                activity.startActivity(intent);
+            }
+        }
+    }
 }//End of class

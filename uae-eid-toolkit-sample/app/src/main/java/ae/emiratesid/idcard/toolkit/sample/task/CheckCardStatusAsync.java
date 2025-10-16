@@ -1,5 +1,6 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
+import android.nfc.Tag;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
@@ -10,6 +11,7 @@ import ae.emiratesid.idcard.toolkit.datamodel.ToolkitResponse;
 import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
+import ae.emiratesid.idcard.toolkit.sample.utils.NFCCardParams;
 import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
 public class CheckCardStatusAsync extends AsyncTask<Void, Integer, Integer> {
@@ -20,15 +22,33 @@ public class CheckCardStatusAsync extends AsyncTask<Void, Integer, Integer> {
     private String message;
     private String xmlResponse;
 
+    private Tag tag;
+    private String cardNumber, dob, expiryDate;
+
     public CheckCardStatusAsync(CheckCardStatusListener listener) {
         this.weakReference = new WeakReference<CheckCardStatusListener>(listener);
     }//CheckCardStatusAsync
 
+
+    public CheckCardStatusAsync(CheckCardStatusListener listener, Tag tag) {
+
+        this.weakReference = new WeakReference<CheckCardStatusListener>(listener);
+        this.tag = tag;
+        this.cardNumber = NFCCardParams.CARD_NUMBER;
+        this.dob = NFCCardParams.DOB;
+        this.expiryDate = NFCCardParams.EXPIRY_DATE;
+    }
+
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-
+            if (tag != null) {
+                cardReader = ConnectionController.initConnection(tag);
+                ConnectionController.setNFCParams(cardNumber, dob, expiryDate);
+            } else {
                 cardReader = ConnectionController.getConnection();
+            }
+
             if (cardReader == null) {
                 return Constants.ERROR;
             }//

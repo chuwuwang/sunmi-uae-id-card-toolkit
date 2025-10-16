@@ -205,6 +205,7 @@
                 android:layout_height="wrap_content"
                 android:weightSum="3">
 
+
                 <ImageView
                     android:id="@+id/img_read_family_book"
                     android:layout_width="0dp"
@@ -217,7 +218,7 @@
                     android:src="@drawable/read_family_book" />
 
                 <ImageView
-                    android:id="@+id/img_authenticate_face"
+                    android:id="@+id/img_card_validation_off_card"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -225,40 +226,7 @@
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
-                    android:src="@drawable/face_authentication" />
-
-                <ImageView
-                    android:id="@+id/img_authenticate_face_idn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/face_authentication_id" />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="3">
-
-
-                <ImageView
-                    android:id="@+id/img_authenticate_face_passport"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/face_authentication_passport" />
-
+                    android:src="@drawable/check_card_status_offline" />
 
                 <ImageView
                     android:id="@+id/img_disconnect_reader"
@@ -271,6 +239,13 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/disconnect_reader" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
                 <ImageView
                     android:id="@+id/img_set_nfc_params"
                     android:layout_width="0dp"
@@ -281,14 +256,6 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
                     android:src="@drawable/set_nfc_params" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="3">
 
                 <ImageView
                     android:id="@+id/img_device_id"
@@ -311,6 +278,48 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
                     android:src="@drawable/parse_mrz" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <ImageView
+                    android:id="@+id/img_face_license"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:src="@drawable/img_face_license" />
+
+                <ImageView
+                    android:id="@+id/img_authenticate_face_idn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/face_authentication_id" />
+
+                <ImageView
+                    android:id="@+id/img_authenticate_face_passport"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/face_authentication_passport" />
 
                 <ImageView
                     android:id="@+id/img_clean_up"

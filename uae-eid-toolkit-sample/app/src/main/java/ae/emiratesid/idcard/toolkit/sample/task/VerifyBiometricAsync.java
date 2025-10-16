@@ -7,6 +7,7 @@ import java.lang.ref.WeakReference;
 
 import ae.emiratesid.idcard.toolkit.CardReader;
 import ae.emiratesid.idcard.toolkit.ToolkitException;
+import ae.emiratesid.idcard.toolkit.datamodel.CardPublicData;
 import ae.emiratesid.idcard.toolkit.datamodel.FingerData;
 import ae.emiratesid.idcard.toolkit.datamodel.ToolkitResponse;
 import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
@@ -23,18 +24,6 @@ public class VerifyBiometricAsync extends AsyncTask<Void, Integer, Integer> {
     private final FingerData fingerData;
     private int timeoutInSeconds = 20;
     private String xmlResponse;
-    private Tag tag;
-    private String cardNumber , dob , expiryDate;
-
-    public VerifyBiometricAsync(VerifyFingerprintListener listener,
-                                FingerData fingerData,int timeoutInSeconds, Tag tag) {
-
-        this(listener , fingerData, timeoutInSeconds);
-        this.timeoutInSeconds = timeoutInSeconds;
-        this.cardNumber = NFCCardParams.CARD_NUMBER;
-        this.dob = NFCCardParams.DOB;
-        this.expiryDate = NFCCardParams.EXPIRY_DATE;
-    }
 
     public VerifyBiometricAsync(VerifyFingerprintListener listener, FingerData fingerData,
                                 int timeoutInSeconds) {
@@ -47,16 +36,11 @@ public class VerifyBiometricAsync extends AsyncTask<Void, Integer, Integer> {
     protected Integer doInBackground(Void... params) {
         //check for the parameters
         try {
-            if(tag != null){
-                cardReader = ConnectionController.initConnection(tag);
-                ConnectionController.setNFCParams(cardNumber , dob, expiryDate);
-            }
-            else{
-                cardReader = ConnectionController.getConnection();
-            }
+
+            cardReader = ConnectionController.getConnection();
 
             if (cardReader == null) {
-                status =  Constants.ERROR;
+                status = Constants.ERROR;
                 return status;
             }//if()
 
@@ -70,22 +54,22 @@ public class VerifyBiometricAsync extends AsyncTask<Void, Integer, Integer> {
             if (null == response) {
                 message = "Null response obtained";
                 status = Constants.ERROR;
-                Logger.e("Status code null response::"+status);
+                Logger.e("Status code null response::" + status);
                 return status;
             }
-            message =  response.getStatus();
-            Logger.e("Message Code ::"+message);
+            message = response.getStatus();
+            Logger.e("Message Code ::" + message);
             xmlResponse = response.toXmlString();
             Logger.d("Status  verify biometric_ 1 ___" + status);
-            status  =  Constants.SUCCESS;
-            Logger.e("Status code Success::"+status);
+            status = Constants.SUCCESS;
+            Logger.e("Status code Success::" + status);
             return status;
         } catch (ToolkitException e) {
-            Logger.e("Status code ::"+ e.getCode());
+            Logger.e("Status code ::" + e.getCode());
             status = (int) e.getCode();
             //Logger.e("Status code ::"+status);
             message = e.getMessage();
-            Logger.e("Message exception ::"+message);
+            Logger.e("Message exception ::" + message);
         }// catch()
         catch (Exception e) {
             message = "Unknown Error";

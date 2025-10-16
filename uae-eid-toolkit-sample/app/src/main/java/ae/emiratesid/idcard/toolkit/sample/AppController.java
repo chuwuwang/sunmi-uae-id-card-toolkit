@@ -21,8 +21,7 @@ public class AppController extends Application {
         super.onCreate();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences
                 (getApplicationContext());
-        String url = sharedPreferences.getString("VG_URL", "https://appshield.digitaltrusttech.com/VGProd/ValidationGateway/Service");
-        //String url = sharedPreferences.getString("VG_URL", "https://appshield.digitaltrusttech.com/VGProd/ValidationGateway/Service");
+        String url = sharedPreferences.getString("VG_URL", "");
         VG_URL = url.trim();
         IN_PROCESS = sharedPreferences.getBoolean("IN_PROCESS", true);
         Logger.d("VG_URL__" + VG_URL);

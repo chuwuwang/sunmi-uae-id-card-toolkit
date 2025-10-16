@@ -1,5 +1,6 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
+import android.nfc.Tag;
 import android.os.AsyncTask;
 
 import java.io.ByteArrayInputStream;
@@ -16,6 +17,7 @@ import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
 import ae.emiratesid.idcard.toolkit.sample.utils.CryptoUtils;
+import ae.emiratesid.idcard.toolkit.sample.utils.NFCCardParams;
 import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
 public class ReadCertificateAsync extends AsyncTask<Void, Integer, Integer> {
@@ -27,16 +29,34 @@ public class ReadCertificateAsync extends AsyncTask<Void, Integer, Integer> {
     private String message;
     private final String PIN;
 
+    private Tag tag;
+    private String cardNumber, dob, expiryDate;
+
     public ReadCertificateAsync(final String PIN, ReadCertificateListener listener) {
         this.weakReference = new WeakReference<ReadCertificateListener>(listener);
         this.PIN = PIN;
 
     }
 
+    public ReadCertificateAsync(final String PIN, ReadCertificateListener listener, Tag tag) {
+        this.weakReference = new WeakReference<ReadCertificateListener>(listener);
+        this.PIN = PIN;
+        this.tag = tag;
+        this.cardNumber = NFCCardParams.CARD_NUMBER;
+        this.dob = NFCCardParams.DOB;
+        this.expiryDate = NFCCardParams.EXPIRY_DATE;
+
+    }
+
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-            cardReader = ConnectionController.getConnection();;
+            if (tag != null) {
+                cardReader = ConnectionController.initConnection(tag);
+                ConnectionController.setNFCParams(cardNumber, dob, expiryDate);
+            } else {
+                cardReader = ConnectionController.getConnection();
+            }
             if (cardReader == null) {
                 return Constants.ERROR;
             }//if()
@@ -98,8 +118,7 @@ public class ReadCertificateAsync extends AsyncTask<Void, Integer, Integer> {
         try {
             CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
             ByteArrayInputStream in = new ByteArrayInputStream(cert);
-            X509Certificate certificate = (X509Certificate) certFactory.generateCertificate(in);
-            return certificate;
+            return (X509Certificate) certFactory.generateCertificate(in);
         } catch (CertificateException e) {
             e.printStackTrace();
         }
@@ -108,7 +127,7 @@ public class ReadCertificateAsync extends AsyncTask<Void, Integer, Integer> {
 
     public interface ReadCertificateListener {
         void onCertificateReadComplete(int status, String message,
-                                              Certificate certificateAuth,
-                                              Certificate certificateSign);
+                                       Certificate certificateAuth,
+                                       Certificate certificateSign);
     }
 }

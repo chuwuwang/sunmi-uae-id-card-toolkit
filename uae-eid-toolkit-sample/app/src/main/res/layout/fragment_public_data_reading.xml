@@ -1,32 +1,32 @@
-<LinearLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/other_screen_bg">
+    android:background="@drawable/other_screen_bg"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:typeface="monospace"
-        android:gravity="center"
+        android:layout_gravity="center_horizontal"
         android:background="@color/colorReadPublicDataBG"
+        android:gravity="center"
         android:text="Please insert your card in the reader to read the public data"
-        android:id="@+id/textView"
-        android:textSize="20dp"
         android:textColor="@color/colorReadPublicDataAccent"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="20dp"
+        android:typeface="monospace" />
+
     <Button
+        android:id="@+id/btn_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
-        android:text="Read Data"
         android:background="@drawable/normal_button_bg"
+        android:text="Read Data"
         android:textColor="@color/colorReadPublicDataAccent"
         android:textSize="20dp"
-        android:textStyle="bold"
-        android:id="@+id/btn_refresh"
-        android:layout_gravity="center_horizontal" />
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -38,19 +38,18 @@
 
 
     <ae.emiratesid.idcard.toolkit.sample.widget.LogTextView
+        android:id="@+id/txtReadData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:typeface="monospace"
-        android:textSize="14sp"
+        android:layout_marginTop="8dp"
         android:gravity="left"
-        android:paddingLeft="16dp"
+        android:maxLines="100"
         android:padding="10dp"
-        android:maxLines = "100"
-        android:scrollbars = "vertical"
-        android:id="@+id/txtReadData"
+        android:paddingLeft="16dp"
+        android:scrollbars="vertical"
         android:text=""
-        android:layout_marginTop="8dp"/>
-
+        android:textSize="14sp"
+        android:typeface="monospace" />
 
 
 </LinearLayout>
