@@ -1,40 +1,42 @@
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-
-    id 'kotlin-android-extensions'
-
-    id 'kotlin-kapt'
-
-    id "androidx.navigation.safeargs"
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jlleitschuh.gradle.ktlint'
-}
+apply plugin: 'com.android.application'
 
 android {
-    namespace 'ae.emiratesid.idcard.toolkit.sample'
-    compileSdk 34
-    buildToolsVersion '30.0.3'
+    compileSdk 28
+    buildToolsVersion '25.0.2'
+
     defaultConfig {
         applicationId "ae.emiratesid.idcard.toolkit.sample"
-        minSdk 29
-        targetSdk 33
-        versionCode 4
-        versionName "1.4"
-        multiDexEnabled true
+        minSdk 25
+        targetSdk 28
+        versionCode 3
+        versionName "1.2"
+    }
+
+    signingConfigs {
+        /**
+         * 模拟第三方应用签名
+         */
+        sunmi_sbs {
+            storeFile file('./key/sunmi_sbs.jks')
+            storePassword "123456"
+            keyAlias "Sunmi"
+            keyPassword "123456"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
     }
     buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.sunmi_sbs
+        }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        release {
-            minifyEnabled false
-            // signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.sunmi_sbs
         }
     }
-
     splits {
 
         // Configures multiple APKs based on ABI.
@@ -50,139 +52,110 @@ android {
             reset()
 
             // Specifies a list of ABIs that Gradle should create APKs for.
-            // include "armeabi"/*,"armeabi-v7a","arm64-v8a"*/
+            //include "armeabi"/*,"armeabi-v7a","arm64-v8a"*/
             include "armeabi-v7a"
-            // include "arm64-v8a"
+            //include "arm64-v8a"
 
             // Specifies that we do not want to also generate a universal APK that includes all ABIs.
             universalApk false
         }
     }
 
-    kotlinOptions {
-        jvmTarget = '11'
-    }
-    packagingOptions {
-        exclude 'AndroidManifest.xml'
-        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
-        pickFirst 'lib/arm64-v8a/libc++_shared.so'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
+//    packagingOptions {
+//        //exclude 'AndroidManifest.xml'
+//        //pickFirst 'lib/arm64-v8a/libc++_shared.so'
+//        pickFirst 'lib/armeabi-v7a/libncnn.so'
+//        pickFirst 'lib/armeabi-v7a/libTrustFingerAlg.so'
+//        pickFirst 'lib/armeabi-v7a/libopencv_java3.so'
+//        pickFirst 'lib/armeabi-v7a/libTrustFinger.so'
+//        pickFirst 'lib/armeabi-v7a/libAratekfingerpld.so'
+//        pickFirst 'lib/armeabi-v7a/libwsq.so'
+//        pickFirst 'lib/armeabi-v7a/libnfiq.so'
+//    }
+
+//    packagingOptions {
+//        pickFirst 'lib/armeabi-v7a/libopencv_java3.so'
+//    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    implementation 'com.android.support:design:26.0.0'
-    implementation 'com.android.support:support-v4:26.0.0'
+    testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:cardview-v7:26.0.0'
     implementation 'com.android.support:appcompat-v7:26.0.0'
-
-    implementation 'com.madgag.spongycastle:pg:1.54.0.0'
+    implementation 'com.android.support:support-v4:26.0.0'
+    implementation 'com.android.support:design:26.0.0'
     implementation 'com.madgag.spongycastle:core:1.54.0.0'
     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
     implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
-
+    implementation 'com.madgag.spongycastle:pg:1.54.0.0'
+//    implementation project(':ocr-reader-release')
     implementation 'com.rmtheis:tess-two:6.0.4'
-
     implementation project(':EIDAToolkit')
-    implementation project(':ocr-reader-release')
     implementation project(':xmlsec2-release')
-
-    // omapossc-plugin-release
-    // implementation project(':omapossc-plugin-release')
+    implementation project(':dttface-release')
+    implementation project(':sunmilib')
 
     // feitian-plugin-release'
-    // implementation project(':feitian-plugin-release')
+    //implementation project(':feitian-plugin-release')
 
     // nfcreader-plugin-release'
     implementation project(':nfcreader-plugin-release')
 
     // morpho-plugin-release
-    // implementation project(':morpho-plugin-release')
+    //implementation project(':morpho-plugin-release')
 
     // acs-plugin-release
-    // implementation project(':acs-plugin-release')
+    implementation project(':acs-plugin-release')
 
-    // gripid-fingerprint-sensor-plugin-release
-    // implementation project(':gripid-fingerprint-sensor-plugin-release')
-
-    // telpo-plugin-release
-    // implementation project(':tps360-plugin-release')
-
-    // implementation project(':libBioMini_v20')
+    //telpo-plugin-release
+    //implementation project(':tps360-plugin-release')
+    //implementation project(':libBioMini_v20')
 
     // gen2wave-plugin-release
-    // implementation project(':gen2wave-plugin-release')
+    //implementation project(':gen2wave-plugin-release')
 
     // gen2waverp70a-plugin-release
-    // implementation project(':gen2waverp70a-plugin-release')
-    // implementation project(':libBioMini_v20')
+    //implementation project(':gen2waverp70a-plugin-release')
+    //implementation project(':libBioMini_v20')
 
     // idt-plugin-identos
-    // implementation project(':idt-plugin-identos')
-    // implementation project(':idt-pcsc-driver-release')
-    // implementation project(':idt-tactivo-driver-release')
-    // implementation ('net.java.dev.jna:jna:5.2.0@aar')
+//    implementation project(':idt-plugin-identos')
+//    implementation project(':idt-pcsc-driver-release')
+//    implementation project(':idt-tactivo-driver-release')
+//    implementation ('net.java.dev.jna:jna:5.2.0@aar')
 
     // grabba-plugin-release
-    // implementation project(':grabba-plugin-release')
-    // implementation project(':grabba-interfaces-release')
-    // implementation project(':grabba-sdk-release')
+    //implementation project(':grabba-plugin-release')
+    //implementation project(':grabba-interfaces-release')
+    //implementation project(':grabba-sdk-release')
 
     // artisecure-suprema-plugin-fingerprint
-    // implementation project(':artisecure-suprema-plugin-fingerprint')
-    // implementation project(':libBioMini_v20')
+    //implementation project(':artisecure-suprema-plugin-fingerprint')
+    //implementation project(':libBioMini_v20')
 
     // artisecure-plugin-smartcard
-    // implementation project(':artisecure-plugin-smartcard')
+    //implementation project(':artisecure-plugin-smartcard')
 
     // dsap-biopos-plugin-release
-    // implementation project(':dsap-biopos-plugin-release')
+    //implementation project(':dsap-biopos-plugin-release')
 
     // wcts8-plugin-release
-    // implementation project(':wcts8-plugin-release')
-    // implementation project(':ptapi-release')
-    // implementation 'org.slf4j:slf4j-api:1.7.21'
+    //implementation project(':wcts8-plugin-release')
+    //implementation project(':ptapi-release')
+    //implementation 'org.slf4j:slf4j-api:1.7.21'
 
     // idscreen-plugin-release
-    // implementation project(':idscreen-plugin-release')
-    // implementation project(':libsmartcard')
+    //implementation project(':idscreen-plugin-release')
+    //implementation project(':libsmartcard')
 
-    // implementation project(':paysky-plugin-release')
-    // implementation project(':FingerPrintLib_v1.0.9')
+    //implementation project(':paysky-plugin-release')
+    //implementation project(':FingerPrintLib_v1.0.9')
 
-    implementation 'com.itextpdf:itextg:5.5.10'
-    // implementation 'io.fotoapparat:fotoapparat:2.7.0'
+//    implementation files('libs/sunmi-plugin-debug-v1.0.0.aar')
 
-    implementation "androidx.core:core-ktx:1.8.0"
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-
-    /*Dot Face SDK*/
-    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-
-    implementation "com.innovatrics.dot:dot-face-detection-balanced:$dotVersion"
-    implementation "com.innovatrics.dot:dot-face-expression-neutral:$dotVersion"
-    implementation "com.innovatrics.dot:dot-face-passive-liveness:$dotVersion"
-
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
-
-    // ssp and sdp
-    implementation 'com.intuit.ssp:ssp-android:1.1.0'
-    implementation 'com.intuit.sdp:sdp-android:1.1.0'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    implementation 'com.android.support:multidex:1.0.3'
-}
-
-ktlint {
-    android = true
+//    implementation 'io.fotoapparat:fotoapparat:2.7.0'
+    implementation 'com.github.tiann:FreeReflection:3.1.0'
+    implementation 'androidx.core:core-ktx:1.6.0'
 }

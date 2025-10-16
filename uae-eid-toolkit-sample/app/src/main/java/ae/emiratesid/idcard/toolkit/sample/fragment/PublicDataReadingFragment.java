@@ -55,6 +55,9 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
     private Tag tag;
 
 
+
+
+
     public PublicDataReadingFragment() {
         // Required empty public constructor
     }
@@ -83,13 +86,13 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
             isReading = true;
 
             //show the dialog to provide user interaction...
+            showProgressDialog("Reading");
 
             //create the object of ReaderCardDataAsync
             if (tag == null) {
                 Logger.e("setNfcMode :: tag is null");
                 return;
             } else {
-                showProgressDialog("Reading");
                 Logger.e("setNfcMode :: calling read public data");
                 readerTask = new ReaderCardDataAsync(readerCardDataListener, tag);
             }
@@ -160,7 +163,8 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
 
     private ReaderCardDataListener readerCardDataListener = new ReaderCardDataListener() {
         @Override
-        public void onCardReadComplete(int status, String message, CardPublicData cardPublicData) {
+        public void onCardReadComplete(int status, String message, CardPublicData cardPublicData
+        ) {
             //dismiss the dialog...
             hideProgressDialog();
 
@@ -502,11 +506,12 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
     }
 
 
-    private byte[] readDataFromFile(String fileName) {
+    private byte[] readDataFromFile(String fileName)
+    {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EIDAToolkit/";
 
-        Logger.d("File Path is ::" + path);
-        File file = new File(path + fileName);
+        Logger.d("File Path is ::"+path);
+        File file = new File(path+fileName);
         int size = (int) file.length();
         byte[] bytesDataFromFile = new byte[size];
         try {
@@ -519,17 +524,18 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
             return null;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return  null;
         }
     }
 
 
-    private String readXMLDataFromFile(String fileName) {
+    private String readXMLDataFromFile(String fileName)
+    {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EIDAToolkit/";
 
-        Logger.d("File Path is ::" + path);
+        Logger.d("File Path is ::"+path);
 
-        File file = new File(path + fileName);
+        File file = new File(path+fileName);
         StringBuilder text = new StringBuilder();
 
         try {
@@ -542,7 +548,8 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
             }
             br.close();
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             //You'll need to add proper error handling here
         }
         return text.toString();

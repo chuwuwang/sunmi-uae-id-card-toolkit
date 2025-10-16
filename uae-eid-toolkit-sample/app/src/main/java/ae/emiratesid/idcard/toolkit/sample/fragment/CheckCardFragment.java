@@ -1,6 +1,5 @@
 package ae.emiratesid.idcard.toolkit.sample.fragment;
 
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -8,66 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import ae.emiratesid.idcard.toolkit.internal.ErrorCode;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.R;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
-import ae.emiratesid.idcard.toolkit.sample.task.CardReaderConnectionTask;
 import ae.emiratesid.idcard.toolkit.sample.task.CheckCardStatusAsync;
-import ae.emiratesid.idcard.toolkit.sample.task.ReaderCardDataAsync;
 import ae.emiratesid.idcard.toolkit.sample.widget.LogTextView;
 
 import static ae.emiratesid.idcard.toolkit.sample.AppController.isReading;
 
-
 public class CheckCardFragment extends BaseFragment implements View.OnClickListener{
-    private static boolean isNFCMode;
-    private Tag tag;
 
     public CheckCardFragment() {
         // Required empty public constructor
-    }
-
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * Use the {@link CheckCardFragment#newInstance} factory method to
-     * @return A new instance of fragment PublicDataReadingFragment.
-     */
-    public static CheckCardFragment newInstance(boolean isNFC) {
-        CheckCardFragment fragment = new CheckCardFragment();
-        isNFCMode = isNFC;
-        return fragment;
-    }
-
-    public void setNfcMode(Tag tag) {
-        this.tag = tag;
-        isNFCMode = true;
-        Logger.e("setNfcMode :: called");
-
-        if (!isReading) {
-            Logger.d("onResume :: enableForegroundDispatch called");
-            txtStatus.setText("");
-            //set the reading flag..
-            isReading = true;
-
-            //show the dialog to provide user interaction...
-            showProgressDialog("Reading");
-
-            //create the object of ReaderCardDataAsync
-            if (tag == null) {
-                Logger.e("setNfcMode :: tag is null");
-                return;
-            } else {
-                Logger.e("setNfcMode :: calling check card status");
-                checkCardStatusAsync  = new CheckCardStatusAsync(checkCardStatusListener,tag);
-            }
-            checkCardStatusAsync.execute();
-        }//
     }
 
     private LogTextView txtStatus;
@@ -85,19 +38,6 @@ public class CheckCardFragment extends BaseFragment implements View.OnClickListe
         btnCheckCardStatus.setOnClickListener(this);
         return view;
     }
-
-
-    private CardReaderConnectionTask.ConnectToolkitListener connectToolkitListener = new
-            CardReaderConnectionTask.ConnectToolkitListener() {
-                @Override
-                public void onToolkitConnected(int status, boolean isConnectFlag, String message) {
-                    if (!isConnectFlag) {
-                        Toast.makeText(getActivity(), "Disconnected", Toast.LENGTH_SHORT).show();
-                    }//
-                }//onToolkitConnected()
-            };//ConnectToolkitListener
-
-
     //Create  a listener object for card status.
     private CheckCardStatusAsync.CheckCardStatusListener checkCardStatusListener =
             new CheckCardStatusAsync.CheckCardStatusListener() {
@@ -122,12 +62,6 @@ public class CheckCardFragment extends BaseFragment implements View.OnClickListe
                         }
                     }//else
 
-                    if (isNFCMode) {
-                        CardReaderConnectionTask cardReaderConnectionTask =
-                                new CardReaderConnectionTask(connectToolkitListener, false);
-                        cardReaderConnectionTask.execute();
-                    }
-
                 }//onCheckCardStatus
             };//checkCardStatusListener
 
@@ -146,12 +80,7 @@ public class CheckCardFragment extends BaseFragment implements View.OnClickListe
                 showProgressDialog("Checking card status with server...");
 
                 //create the object of ReaderCardDataAsync
-
-                if (tag == null) {
-                    checkCardStatusAsync  = new CheckCardStatusAsync(checkCardStatusListener);
-                } else {
-                    checkCardStatusAsync  = new CheckCardStatusAsync(checkCardStatusListener,tag);
-                }
+                checkCardStatusAsync  = new CheckCardStatusAsync(checkCardStatusListener);
                 checkCardStatusAsync.execute();
 
             }//

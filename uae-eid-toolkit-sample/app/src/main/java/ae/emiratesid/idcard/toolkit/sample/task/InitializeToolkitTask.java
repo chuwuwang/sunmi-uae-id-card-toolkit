@@ -1,6 +1,9 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
+
+import com.sunmi.eid_plugin.utils.LogUtil;
 
 import ae.emiratesid.idcard.toolkit.ToolkitException;
 import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
@@ -17,6 +20,7 @@ public class InitializeToolkitTask extends AsyncTask<Void , Integer , String> {
 
     @Override
     protected String doInBackground(Void... voids) {
+        LogUtil.LEVEL = Log.ASSERT;
         String statusMessage =  null;
         try {
             isToolkitInitialized = ConnectionController.initialize();

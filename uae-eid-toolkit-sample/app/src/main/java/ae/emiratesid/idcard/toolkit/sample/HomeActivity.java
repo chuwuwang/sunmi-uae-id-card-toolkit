@@ -1,5 +1,6 @@
 package ae.emiratesid.idcard.toolkit.sample;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipboardManager;
@@ -9,19 +10,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ae.emiratesid.idcard.toolkit.CardReader;
+import ae.emiratesid.idcard.toolkit.Toolkit;
+import ae.emiratesid.idcard.toolkit.ToolkitException;
+import ae.emiratesid.idcard.toolkit.plugin.nfcreader.NFCReader;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
 import ae.emiratesid.idcard.toolkit.sample.task.CardReaderConnectionTask;
 import ae.emiratesid.idcard.toolkit.sample.task.CardSerialNumberAsync;
 import ae.emiratesid.idcard.toolkit.sample.task.DeviceIdAsync;
 import ae.emiratesid.idcard.toolkit.sample.task.InitializeToolkitTask;
-import ae.emiratesid.idcard.toolkit.sample.toolkit_face.ToolkitFace;
+import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+
     String[] operation = {
             "Initialize",//1
             "Register Device",//2
@@ -41,19 +48,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             "Device ID",//16
             "Parse MRZ",//17
             "Clean Up",//18
-            "Authenticate Face",//19
-            "Authenticate Face Idn",//20
-            "Authenticate Face Passport",//21
-            "Card Validation Off Card"//22
+            "Authenticate Face"//19
     };
 
     private ImageView imgInitialize, imgRegisterDevice, imgConnectReader, imgCardSerialNumber, imgReadPublicData,
             imgCheckCardStatus, imgVerifyBiometric, imgVerifyCardAndBiometric, imgPKIAuth, imgPinReset, imgReadCertificates,
             imgSignData, imgReadFamilyBook, imgDisconnectReader, imgSetNfcParams, imgDeviceId, imgParseMRZ, imgCleanUp,
-            imgAuthenticateFaceIdn, imgAuthenticateFacePassport, imgCardValidationOffCard,
-            img_face_license;
+            imgAuthenticateFace, imgAuthenticateFaceIdn, imgAuthenticateFacePassport;
 
+    private ListView listOperation;
     private ProgressDialog pd;
+    private boolean isToolkitInitializeSuccessfull = false;
+
     private static int variableForOnClick;
 
 
@@ -61,7 +67,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
+
+        ///////////////////////////////////////////////
 
         imgInitialize = (ImageView) findViewById(R.id.img_initialize);
         imgRegisterDevice = (ImageView) findViewById(R.id.img_register_device);
@@ -81,10 +90,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         imgDeviceId = (ImageView) findViewById(R.id.img_device_id);
         imgParseMRZ = (ImageView) findViewById(R.id.img_parse_mrz);
         imgCleanUp = (ImageView) findViewById(R.id.img_clean_up);
+        imgAuthenticateFace = (ImageView) findViewById(R.id.img_authenticate_face);
         imgAuthenticateFaceIdn = (ImageView) findViewById(R.id.img_authenticate_face_idn);
         imgAuthenticateFacePassport = (ImageView) findViewById(R.id.img_authenticate_face_passport);
-        imgCardValidationOffCard = (ImageView) findViewById(R.id.img_card_validation_off_card);
-        img_face_license = (ImageView) findViewById(R.id.img_face_license);
 
         imgInitialize.setOnClickListener(this);
         imgRegisterDevice.setOnClickListener(this);
@@ -104,37 +112,91 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         imgDeviceId.setOnClickListener(this);
         imgParseMRZ.setOnClickListener(this);
         imgCleanUp.setOnClickListener(this);
+        imgAuthenticateFace.setOnClickListener(this);
         imgAuthenticateFaceIdn.setOnClickListener(this);
         imgAuthenticateFacePassport.setOnClickListener(this);
-        imgCardValidationOffCard.setOnClickListener(this);
-        img_face_license.setOnClickListener(this);
 
+
+        ///////////////////////////////////////////////
+
+
+//        listOperation = (ListView) findViewById(R.id.listView);
+//        //if the fragment is available then the it is not two plane.
+//
+//        ArrayAdapter<String> itemsAdapter =
+//                new ArrayAdapter<String>(this, R.layout.list_item_view, operation);
+//
+//        listOperation.addHeaderView(LayoutInflater.from(this).inflate(R.layout.header, null, false));
+//        listOperation.setAdapter(itemsAdapter);
+//        listOperation.setOnItemClickListener(this);
     }
 
-    private CardReaderConnectionTask.ConnectToolkitListener connectToolkitListener =
-            new CardReaderConnectionTask.ConnectToolkitListener() {
-                @Override
-                public void onToolkitConnected(int status, boolean isConnectFlag, String message) {
+    private CardReaderConnectionTask.ConnectToolkitListener connectToolkitListener = new CardReaderConnectionTask.ConnectToolkitListener() {
+        @Override
+        public void onToolkitConnected(int status, boolean isConnectFlag, String message) {
 
-                    hideProgressDialog();
-                    if (isConnectFlag) {
-                        if (status == Constants.SUCCESS) {
-                            Toast.makeText(HomeActivity.this, "Card Reader Connected",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Toast.makeText(getApplicationContext(), "Card Reader connection failed::" + message,
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    if (status == Constants.SUCCESS) {
-                        Toast.makeText(HomeActivity.this, "Successfully Disconnected",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Toast.makeText(HomeActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+            hideProgressDialog();
+            if (isConnectFlag) {
+                if (status == Constants.SUCCESS) {
+                    Toast.makeText(HomeActivity.this, "Card Reader Connected",
+                            Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            };
+                Toast.makeText(getApplicationContext(), "Card Reader connection failed::" + message,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (status == Constants.SUCCESS) {
+                Toast.makeText(HomeActivity.this, "Successfully Disconnected",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Toast.makeText(HomeActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+//    @Override
+//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//        Logger.d("onItemClick():: position " + i);
+//
+//        if (i == 1) {
+//            initialize();
+//            return;
+//        }//
+//        if (i == 3) {
+//            showProgressDialog("Connecting Card Reader....");
+//            CardReaderConnectionTask cardReaderConnectionTask = new CardReaderConnectionTask
+//                    (connectToolkitListener, true);
+//            cardReaderConnectionTask.execute();
+//            return;
+//        }
+//
+////        if (i == 4) {
+////            getCardSerialNumber();
+////            return;
+////        }
+//
+//        if (i == 14) {
+//            showProgressDialog("Disconnecting Reader....");
+//            CardReaderConnectionTask cardReaderConnectionTask = new CardReaderConnectionTask
+//                    (connectToolkitListener, false);
+//            cardReaderConnectionTask.execute();
+//            return;
+//        }//
+//
+//        if (i == 16) {
+//            getDeviceId();
+//            return;
+//        }
+//        if (i == 18) {
+//            ConnectionController.cleanup();
+//            Toast.makeText(this, "Clean Up Success", Toast.LENGTH_LONG).show();
+//
+//            return;
+//        }
+//        loadActivity(i);
+//    }
 
     @Override
     public void onClick(View v) {
@@ -147,17 +209,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         if (v.getId() == R.id.img_register_device) {
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             variableForOnClick = 2;
             Logger.d("Value for variableForOnClick  : " + variableForOnClick);
             loadActivity(variableForOnClick);
             return;
         }
         if (v.getId() == R.id.img_connect_reader) {
+            showProgressDialog("Connecting Reader....");
             variableForOnClick = 3;
-            showProgressDialog("Connecting Card Reader....");
             CardReaderConnectionTask cardReaderConnectionTask = new CardReaderConnectionTask
                     (connectToolkitListener, true);
             cardReaderConnectionTask.execute();
+
             return;
         }
         if (v.getId() == R.id.img_card_serial_number) {
@@ -236,7 +304,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (v.getId() == R.id.img_device_id) {
             variableForOnClick = 16;
-            getDeviceId1();
+            getDeviceId();
             return;
         }
         if (v.getId() == R.id.img_parse_mrz) {
@@ -252,6 +320,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             return;
         }
+        if (v.getId() == R.id.img_authenticate_face) {
+            variableForOnClick = 19;
+            Logger.d("Value for variableForOnClick  : " + variableForOnClick);
+            loadActivity(variableForOnClick);
+            return;
+        }
         if (v.getId() == R.id.img_authenticate_face_idn) {
             variableForOnClick = 20;
             Logger.d("Value for variableForOnClick  : " + variableForOnClick);
@@ -264,29 +338,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             loadActivity(variableForOnClick);
             return;
         }
-        if (v.getId() == R.id.img_card_validation_off_card) {
-            variableForOnClick = 22;
-            Logger.d("Value for variableForOnClick  : " + variableForOnClick);
-            loadActivity(variableForOnClick);
-            return;
-        }
 
-        if (v.getId() == R.id.img_face_license) {
-            variableForOnClick = 23;
-            return;
-        }
+
     }
 
     private void loadActivity(int position) {
+
         Intent intent = new Intent(this, OperationActivity.class);
         intent.putExtra("TYPE", position);
         startActivity(intent);
-    }
+    }//loadActivity
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //        //clean up
         Logger.d("___Cleaning up__1.1");
+
         ConnectionController.cleanup();
     }
 
@@ -294,12 +362,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         pd = new ProgressDialog(HomeActivity.this);
         pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        pd.setMessage(Message);
+        pd.setMessage(Message); //recommended to use String resource...
         pd.setCancelable(false);
         pd.show();
-    }
+    }//showProgressDialog()
 
     protected void hideProgressDialog() {
+
+        //check is dialog is showing then dismiss it..
         if (pd != null && (pd.isIndeterminate() || pd.isShowing())) {
             Logger.d("hideProgressDialog():: called");
             pd.dismiss();
@@ -317,11 +387,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if (isSuccessful) {
                         Toast.makeText(HomeActivity.this, "Initialization Successful",
                                 Toast.LENGTH_SHORT).show();
-                        if (ToolkitFace.init() == Constants.SUCCESS) {
-                            Logger.i("Toolkit face initialization successful");
-                        } else {
-                            Logger.e("Toolkit face initialization failed");
-                        }
+
+
                         return;
                     }
                     Toast.makeText(getApplicationContext(), "Initialization Failed::" + statusMessage,
@@ -335,7 +402,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InitializeToolkitTask initializeToolkitTask = new InitializeToolkitTask
                 (mInitializationListener);
         initializeToolkitTask.execute();
-    }
+    }//initialize()
 
     private DeviceIdAsync.DeviceIdListener mDeviceIdListener = new DeviceIdAsync.DeviceIdListener() {
         @Override
@@ -389,77 +456,97 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(getApplicationContext(), "Unable to get device id::" + message,
                     Toast.LENGTH_LONG).show();
             return;
-        }
+
+        }//onGetDeviceId()
     };
 
-    private CardSerialNumberAsync.CardSerialNumberListener mCardSerialNumberListener =
-            new CardSerialNumberAsync.CardSerialNumberListener() {
-                @Override
-                public void onGetCardSerialNumber(int status, String message, String cardSerialNumber) {
+    /////////////////////////
 
-                    hideProgressDialog();
-                    Logger.d("onGetCardSerialNumber:: Card Serial Number " + cardSerialNumber);
+    private CardSerialNumberAsync.CardSerialNumberListener mCardSerialNumberListener = new CardSerialNumberAsync.CardSerialNumberListener() {
 
-                    if (status == Constants.SUCCESS) {
+        @Override
+        public void onGetCardSerialNumber(int status, String message, String cardSerialNumber) {
 
-                        AlertDialog dialog;
-                        AlertDialog.Builder builder;
+            hideProgressDialog();
+            Logger.d("onGetCardSerialNumber:: Card Serial Number " + cardSerialNumber);
 
-                        TextView showText = new TextView(HomeActivity.this);
-                        showText.setPadding(8, 8, 8, 8);
-                        showText.setTextSize(16f);
-                        showText.setText(cardSerialNumber);
-                        showText.setOnLongClickListener(new View.OnLongClickListener() {
+            if (status == Constants.SUCCESS) {
 
-                            @Override
-                            public boolean onLongClick(View v) {
+                AlertDialog dialog;
+                AlertDialog.Builder builder;
 
-                                ClipboardManager manager =
-                                        (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                                TextView showTextParam = (TextView) v;
-                                manager.setText(showTextParam.getText());
+                TextView showText = new TextView(HomeActivity.this);
+                showText.setPadding(8, 8, 8, 8);
+                showText.setTextSize(16f);
+                showText.setText(cardSerialNumber);
+                showText.setOnLongClickListener(new View.OnLongClickListener() {
 
-                                Toast.makeText(v.getContext(), "Text in clipboard",
-                                                Toast.LENGTH_SHORT)
-                                        .show();
-                                return true;
-                            }
-                        });
-                        builder = new AlertDialog.Builder(HomeActivity.this);
-                        builder.setView(showText);
-                        dialog = builder.create();
-                        dialog.setTitle("Card Serial Number");
-                        dialog.setIcon(R.drawable.ic_device_id);
-                        dialog.setCancelable(true);
-
-                        dialog.setButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (mCardSerialNumberAsync != null && mCardSerialNumberAsync.isCancelled())
-                                    mCardSerialNumberAsync.cancel(true);
-
-                            }
-                        });
-
-                        dialog.show();
-                        return;
+                    @Override
+                    public boolean onLongClick(View v) {
+                        // Copy the Text to the clipboard
+                        ClipboardManager manager =
+                                (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                        TextView showTextParam = (TextView) v;
+                        manager.setText(showTextParam.getText());
+                        // Show a message:
+                        Toast.makeText(v.getContext(), "Text in clipboard",
+                                        Toast.LENGTH_SHORT)
+                                .show();
+                        return true;
                     }
-                    Toast.makeText(getApplicationContext(), "Unable to get Card Serial Number ::" + message,
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-            };
+                });
+                builder = new AlertDialog.Builder(HomeActivity.this);
+                builder.setView(showText);
+                dialog = builder.create();
+                dialog.setTitle("Card Serial Number");
+                dialog.setIcon(R.drawable.ic_device_id);
+                dialog.setCancelable(true);
+
+                dialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mCardSerialNumberAsync != null && mCardSerialNumberAsync.isCancelled())
+                            mCardSerialNumberAsync.cancel(true);
+
+                    }
+                });
+
+                dialog.show();
+                return;
+            }
+            Toast.makeText(getApplicationContext(), "Unable to get Card Serial Number ::" + message,
+                    Toast.LENGTH_LONG).show();
+            return;
+
+
+        }
+    };//onGetDeviceId()
+
+
+    //////////////////////////
+
+
     private DeviceIdAsync mDeviceIdAsync = null;
     private CardSerialNumberAsync mCardSerialNumberAsync = null;
 
-    private void getDeviceId1() {
+    private void getDeviceId() {
         showProgressDialog("Obtaining Device Id");
         DeviceIdAsync deviceIdAsync = new DeviceIdAsync(mDeviceIdListener);
         deviceIdAsync.execute();
-    }
+    }//getDeviceId()
+
+
+//    private void getCardSerialNumber() {
+//        showProgressDialog("Obtaining Card Serial Number");
+//        CardSerialNumberAsync cardSerialNumberAsync = new CardSerialNumberAsync(mCardSerialNumberListener);
+//        cardSerialNumberAsync.execute();
+//    }//getDeviceId()
+
 
     @Override
     protected void onRestart() {
         super.onRestart();
         Logger.d("onRestart called");
     }
-}
+
+
+}//HomeActivity

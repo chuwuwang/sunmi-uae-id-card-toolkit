@@ -34,7 +34,7 @@
     <color name="colorDeviceIdAccent">#009FDA</color>
     <color name="colorParseMRZBG">#F2F4F7</color>
     <color name="colorParseMRZAccent">#00305F</color>
-    <color name="black">#000000</color>
     <color name="colorFaceAuthenticationAccent">#2C1689</color>
     <color name="ic_launcher_background">#ECF2FF</color>
+
 </resources>

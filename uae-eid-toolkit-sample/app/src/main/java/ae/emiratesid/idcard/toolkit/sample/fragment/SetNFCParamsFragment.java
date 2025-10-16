@@ -17,7 +17,6 @@ import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.example.justocr.MrzOcrActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -129,8 +128,8 @@ public class SetNFCParamsFragment extends Fragment implements View.OnClickListen
             newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
         }
         if(v == btnReadFromMRZ) {
-            Intent intent =  new Intent(getActivity() , MrzOcrActivity.class);
-            startActivityForResult(intent , MRZ_REQUEST);
+//            Intent intent =  new Intent(getActivity() , MrzOcrActivity.class);
+//            startActivityForResult(intent , MRZ_REQUEST);
         }
 
     }

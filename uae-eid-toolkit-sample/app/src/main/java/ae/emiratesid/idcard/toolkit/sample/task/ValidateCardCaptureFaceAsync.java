@@ -36,11 +36,11 @@ public class ValidateCardCaptureFaceAsync extends AsyncTask<Void, Integer, Integ
             }//
 
             try {
-               // cardReader.validateCardAndCaptureFace(mContext, requestId, requestCode);
-//            } catch (ToolkitException e) {
-//                message = e.getMessage();
-//                status = Constants.ERROR;
-//                return status;
+                cardReader.validateCardAndCaptureFace(mContext, requestId, requestCode);
+            } catch (ToolkitException e) {
+                message = e.getMessage();
+                status = Constants.ERROR;
+                return status;
             } catch (Exception e) {
                 message = e.getMessage();
                 status = Constants.ERROR;

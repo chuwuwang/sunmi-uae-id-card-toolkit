@@ -3,6 +3,7 @@ package ae.emiratesid.idcard.toolkit.sample;
 import android.content.Context;
 import android.nfc.Tag;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,10 +31,8 @@ import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
  * This allow other application to  use the Hardware devices (Readers).
  */
 public class ConnectionController {
-
     private static CardReader cardReader = null;
-    private static Toolkit toolkit = null;
-
+    public static Toolkit toolkit = null;
     public static boolean initialize() throws ToolkitException {
         if (toolkit == null) {
             try {
@@ -46,15 +45,7 @@ public class ConnectionController {
                 configBuilder.append("\n" + "config_directory =" + AppController.path);
                 configBuilder.append("\n" + "log_directory =" + stringConfigPath);
                 configBuilder.append("\n" + "read_publicdata_offline = true");
-
-                //org
-                if (!TextUtils.isEmpty(AppController.VG_URL)) {
-                    configBuilder.append("\n" + "vg_url =" + AppController.VG_URL);
-                } else {
-                    // ICP PROD
-                    configBuilder.append("\n" + "vg_url =" + "");
-                }
-
+                configBuilder.append("\n" + "vg_url =" + "https://appshield.digitaltrusttech.com/VGProd/ZICALAB/ValidationGateway/Service");
                 String pluginDirectorPath = context.getApplicationInfo().nativeLibraryDir + "/";
                 configBuilder.append("\n" + "plugin_directory_path =" + pluginDirectorPath);
                 Logger.d("configBuilder ::" + configBuilder.toString());
@@ -65,7 +56,7 @@ public class ConnectionController {
                 Logger.d("Toolkit version is " + toolkit.getToolkitVerison());
                 return true;
             } catch (ToolkitException e) {
-                Logger.e("Exception occurred in initializing  " + e.getLocalizedMessage());
+                Logger.e("Exception occurred in initializing " + e.getLocalizedMessage());
                 throw e;
             }//catch()..
         }
@@ -85,7 +76,7 @@ public class ConnectionController {
 
 
     public static CardReader initConnection() throws ToolkitException {
-
+        Logger.d("initConnection()");
         if (toolkit == null) {
             throw new ToolkitException(" Please initialize Toolkit first");
         }
@@ -95,18 +86,19 @@ public class ConnectionController {
                 cardReader.disconnect();
             }
         }
-
         if (cardReader == null || !cardReader.isConnected()) {
             try {
+                Logger.d("cardReader:getReaderWithEmiratesID");
                 cardReader = toolkit.getReaderWithEmiratesID();
                 //cardReader = toolkit.listReaders();
                 // Get the first reader.
 
-                Logger.d("list reader successful" + cardReader.getName());
+                Logger.d("list reader successful==" + cardReader.getName());
                 cardReader.connect();
                 Logger.d("Connection Success full  " + cardReader.isConnected());
 
             } catch (ToolkitException e) {
+
                 Logger.e("ToolkitException::Connection failed>" + e.getMessage());
                 cardReader = null;
                 throw e;
@@ -144,6 +136,7 @@ public class ConnectionController {
     }//getConnection() ..
 
     public static CardReader initConnection(Tag tag) throws ToolkitException {
+        Logger.d("initConnection(Tag tag)");
         if (toolkit == null) {
             if (toolkit == null) {
                 throw new ToolkitException(" Please initialize Toolkit first");
@@ -153,8 +146,9 @@ public class ConnectionController {
             if (cardReader != null && cardReader.isConnected()) {
                 closeConnection();
             }
-            Logger.d("Creating a new connection successfully initialized");
+            Logger.e("Creating a new connection successfully initialized");
             toolkit.setNfcMode(tag);
+
 //          discover all the readers connected to the system
             CardReader[] cardReaders = toolkit.listReaders();
 
@@ -163,16 +157,18 @@ public class ConnectionController {
                 Logger.e("No reader are founded");
                 return cardReader;
             }//if()
-            Logger.d("list reader successful" + cardReaders.length);
+            Logger.e("list reader successful" + cardReaders.length);
 
+            Logger.d("cardReader:new CardReader:" + cardReaders[0].getName());
             cardReader = new CardReader(cardReaders[0].getName());
             //Get the first reader.
 
-            Logger.d("list reader successful" + cardReader.getName());
+            Logger.e("list reader successful:" + cardReader.getName());
+            Logger.e("cardReader.connect()");
 
 
             cardReader.connect();
-            Logger.d("Connection Success full  " + cardReader.isConnected());
+            Logger.e("Connection Success full  " + cardReader.isConnected());
 
         } catch (ToolkitException e) {
             Logger.e("ToolkitException::Connection failed>" + e.getMessage());

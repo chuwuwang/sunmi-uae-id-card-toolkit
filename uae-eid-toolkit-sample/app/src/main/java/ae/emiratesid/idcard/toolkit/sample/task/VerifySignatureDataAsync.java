@@ -1,6 +1,5 @@
 package ae.emiratesid.idcard.toolkit.sample.task;
 
-import android.nfc.Tag;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
@@ -12,7 +11,6 @@ import ae.emiratesid.idcard.toolkit.sample.ConnectionController;
 import ae.emiratesid.idcard.toolkit.sample.Constants;
 import ae.emiratesid.idcard.toolkit.sample.logger.Logger;
 import ae.emiratesid.idcard.toolkit.sample.utils.CryptoUtils;
-import ae.emiratesid.idcard.toolkit.sample.utils.NFCCardParams;
 import ae.emiratesid.idcard.toolkit.sample.utils.RequestGenerator;
 
 public class VerifySignatureDataAsync extends AsyncTask<Void  , Integer , Integer> {
@@ -27,8 +25,6 @@ public class VerifySignatureDataAsync extends AsyncTask<Void  , Integer , Intege
     private boolean isDataHashed;
     private String message;
 
-    private Tag tag;
-    private String cardNumber, dob, expiryDate;
     public VerifySignatureDataAsync( byte[] plainData, byte[] signatureData  ,int certificateType,
                                      VerifyDataListener  listener , boolean isDataHashed , String pin) {
         this.plainData = plainData;
@@ -39,31 +35,12 @@ public class VerifySignatureDataAsync extends AsyncTask<Void  , Integer , Intege
         this.PIN = pin;
 
     }//VerifySignatureDataAsync()
-    public VerifySignatureDataAsync( byte[] plainData, byte[] signatureData  ,int certificateType,
-                                     VerifyDataListener  listener , boolean isDataHashed , String pin,Tag tag) {
-        this.plainData = plainData;
-        this.certificateType = certificateType;
-        this.signatureData = signatureData;
-        this.weakReference = new WeakReference<VerifyDataListener>(listener);
-        this.isDataHashed = isDataHashed;
-        this.PIN = pin;
-        this.tag = tag;
-        this.cardNumber = NFCCardParams.CARD_NUMBER;
-        this.dob = NFCCardParams.DOB;
-        this.expiryDate = NFCCardParams.EXPIRY_DATE;
-
-    }//VerifySignatureDataAsync()
 
     @Override
     protected Integer doInBackground(Void ... params) {
         //check for the parameters
         try {
-            if (tag != null) {
-                cardReader = ConnectionController.initConnection(tag);
-                ConnectionController.setNFCParams(cardNumber, dob, expiryDate);
-            } else {
-                cardReader = ConnectionController.getConnection();
-            }
+            cardReader = ConnectionController.getConnection();
             if(cardReader == null){
                 return Constants.ERROR;
             }//if()

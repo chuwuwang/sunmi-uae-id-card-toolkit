@@ -1,0 +1,3 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('sunmi-plugin-debug-v1.0.6.aar'))
+

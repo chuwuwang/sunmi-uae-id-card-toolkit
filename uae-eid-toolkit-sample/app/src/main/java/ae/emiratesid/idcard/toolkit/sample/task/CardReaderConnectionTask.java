@@ -2,7 +2,6 @@ package ae.emiratesid.idcard.toolkit.sample.task;
 
 import android.nfc.Tag;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
@@ -22,10 +21,9 @@ public class CardReaderConnectionTask extends AsyncTask<Void, Integer, Integer> 
         this.weakReference = new WeakReference<>(listener);
         this.isConnectFlag = isConnectFlag;
     }//CardReaderConnectionTask
-
-    public CardReaderConnectionTask(ConnectToolkitListener listener, boolean isConnectFlag, Tag tag) {
-        this(listener, isConnectFlag);
-        this.tag = tag;
+    public CardReaderConnectionTask(ConnectToolkitListener listener, boolean isConnectFlag , Tag tag) {
+        this(listener,isConnectFlag);
+        this.tag =  tag;
 
     }//CardReaderConnectionTask
 
@@ -34,19 +32,18 @@ public class CardReaderConnectionTask extends AsyncTask<Void, Integer, Integer> 
         Logger.d("--------->-1");
         if (isConnectFlag) {
             try {
-                CardReader cardReader = null;
-                Logger.d("--------->0");
-                if (tag == null) {
+                CardReader cardReader =  null;
+                Logger.d("--------->0:"+tag);
+                if(tag == null) {
                     cardReader = ConnectionController.initConnection();
                     Logger.d("--------->2");
                 }//
-                else {
+                else{
                     Logger.d("--------->3");
-                    cardReader = ConnectionController.initConnection(tag);
+                    cardReader =  ConnectionController.initConnection(tag);
 
                 }
-                Logger.d("card connection list " + ConnectionController.getConnection().getName());
-                if (cardReader != null && cardReader.isConnected()) {
+                if ( cardReader != null && cardReader.isConnected() ) {
                     Logger.d("doInBackground() connect successful ");
                     return 0;
                 }//if()
@@ -69,8 +66,8 @@ public class CardReaderConnectionTask extends AsyncTask<Void, Integer, Integer> 
     protected void onPostExecute(Integer status) {
         super.onPostExecute(status);
         Logger.d("CardReaderConnectionTask::onPostExecute() " + status);
-        if (weakReference != null && weakReference.get() != null)
-            weakReference.get().onToolkitConnected(status, isConnectFlag, message);
+        if(weakReference != null && weakReference.get() != null)
+        weakReference.get().onToolkitConnected(status, isConnectFlag, message);
     }
 
     public interface ConnectToolkitListener {

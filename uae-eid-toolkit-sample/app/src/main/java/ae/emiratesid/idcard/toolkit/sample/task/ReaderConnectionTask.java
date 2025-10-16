@@ -55,6 +55,7 @@ public class ReaderConnectionTask extends AsyncTask<Void, Integer, Integer> {
                 e.printStackTrace();
                 message = e.getMessage();
                 Logger.e("CardReaderConnectionTask():::" + e.getMessage());
+                Logger.e("CardReaderConnectionTask():::" + e.getCode());
                 return 1;
             }//
         }//if()
