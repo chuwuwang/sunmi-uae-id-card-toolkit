@@ -52,11 +52,10 @@ allprojects {
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = '1.6.20-M1'
-
     repositories {
-        mavenCentral()
-        jcenter()
         google()
+        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.2'
@@ -69,9 +68,9 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
-        jcenter()
         google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
