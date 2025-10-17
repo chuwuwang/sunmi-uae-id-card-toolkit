@@ -1,5 +1,7 @@
 package ae.emiratesid.idcard.toolkit.sample.fragment;
 
+import static ae.emiratesid.idcard.toolkit.sample.AppController.isReading;
+
 import android.content.Context;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -13,8 +15,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import ae.emiratesid.idcard.toolkit.SignatureValidator;
-import ae.emiratesid.idcard.toolkit.ToolkitException;
+import androidx.annotation.Nullable;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import ae.emiratesid.idcard.toolkit.datamodel.CardPublicData;
 import ae.emiratesid.idcard.toolkit.datamodel.HomeAddress;
 import ae.emiratesid.idcard.toolkit.datamodel.ModifiablePublicData;
@@ -30,33 +40,19 @@ import ae.emiratesid.idcard.toolkit.sample.task.ReaderCardDataListener;
 import ae.emiratesid.idcard.toolkit.sample.utils.Bitmaps;
 import ae.emiratesid.idcard.toolkit.sample.widget.LogTextView;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-
-import static ae.emiratesid.idcard.toolkit.sample.AppController.isReading;
-
-import androidx.annotation.Nullable;
-
 /**
  * to handle interaction events.
  * Use the {@link PublicDataReadingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class PublicDataReadingFragment extends BaseFragment implements View.OnClickListener {
+
     private ReaderCardDataAsync readerTask;
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static boolean isNFCMode;
+
     private Tag tag;
-
-
-
-
 
     public PublicDataReadingFragment() {
         // Required empty public constructor
@@ -78,17 +74,16 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
         this.tag = tag;
         isNFCMode = true;
         Logger.e("setNfcMode :: called");
-
-        if (!isReading) {
+        if ( ! isReading ) {
             Logger.d("onResume :: enableForegroundDispatch called");
             txtStatus.setText("");
-            //set the reading flag..
+            // set the reading flag..
             isReading = true;
 
-            //show the dialog to provide user interaction...
+            // show the dialog to provide user interaction...
             showProgressDialog("Reading");
 
-            //create the object of ReaderCardDataAsync
+            // create the object of ReaderCardDataAsync
             if (tag == null) {
                 Logger.e("setNfcMode :: tag is null");
                 return;
@@ -97,7 +92,7 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
                 readerTask = new ReaderCardDataAsync(readerCardDataListener, tag);
             }
             readerTask.execute();
-        }//
+        }
     }
 
     @Override
@@ -105,14 +100,13 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
         super.onCreate(savedInstanceState);
     }
 
-    //Using a formatted Custom  TextView  to show the result and logs;
-    private LogTextView txtStatus;
+    // Using a formatted Custom  TextView  to show the result and logs;
     private Button btnResfersh;
     private ImageView imgPhtoto;
+    private LogTextView txtStatus;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_public_data_reading, container, false);
         txtStatus = (LogTextView) view.findViewById(R.id.txtReadData);
@@ -120,7 +114,7 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
         // make the text view scrollable.
         txtStatus.setMovementMethod(new ScrollingMovementMethod());
         btnResfersh = (Button) view.findViewById(R.id.btn_refresh);
-        btnResfersh.setVisibility(!(isNFCMode) ? View.VISIBLE : View.INVISIBLE);
+        btnResfersh.setVisibility( ! isNFCMode ? View.VISIBLE : View.INVISIBLE);
         btnResfersh.setOnClickListener(this);
         return view;
     }
@@ -142,7 +136,7 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
         readerCardDataListener = null;
         publicDataString = null;
         isNFCMode = false;
-    }//
+    }
 
     @Override
     protected void appendError(String message) {
@@ -151,29 +145,48 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
 
     private StringBuilder publicDataString = new StringBuilder();
 
-    private CardReaderConnectionTask.ConnectToolkitListener connectToolkitListener = new
-            CardReaderConnectionTask.ConnectToolkitListener() {
-                @Override
-                public void onToolkitConnected(int status, boolean isConnectFlag, String message) {
-                    if (!isConnectFlag) {
-                        Toast.makeText(getActivity(), "Disconnected", Toast.LENGTH_SHORT).show();
-                    }//
-                }//onToolkitConnected()
-            };//ConnectToolkitListener
+    private CardReaderConnectionTask.ConnectToolkitListener connectToolkitListener = new CardReaderConnectionTask.ConnectToolkitListener() {
+
+        @Override
+        public void onToolkitConnected(int status, boolean isConnectFlag, String message) {
+            if ( ! isConnectFlag ) {
+                Toast.makeText(getActivity(), "Disconnected", Toast.LENGTH_SHORT).show();
+            }
+        } // onToolkitConnected()
+
+    }; // ConnectToolkitListener
 
     private ReaderCardDataListener readerCardDataListener = new ReaderCardDataListener() {
+
         @Override
-        public void onCardReadComplete(int status, String message, CardPublicData cardPublicData
-        ) {
-            //dismiss the dialog...
+        public void onCardReadComplete(int status, String message, CardPublicData cardPublicData) {
+            // dismiss the dialog...
             hideProgressDialog();
 
             Logger.d("Reading finished with status " + status);
+
+            String idNumber = cardPublicData.getIdNumber();
+            String cardNumber = cardPublicData.getCardNumber();
+            NonModifiablePublicData nonModifiablePublicData = cardPublicData.getNonModifiablePublicData();
+            String gender = nonModifiablePublicData.getGender();
+            String issueDate = nonModifiablePublicData.getIssueDate();
+            String expiryDate = nonModifiablePublicData.getExpiryDate();
+            String dateOfBirth = nonModifiablePublicData.getDateOfBirth();
+            String fullNameEnglish = nonModifiablePublicData.getFullNameEnglish();
+            String nationalityEnglish = nonModifiablePublicData.getNationalityEnglish();
+            Logger.e("idNumber: " + idNumber);
+            Logger.e("cardNumber: " + cardNumber);
+            Logger.e("gender: " + gender);
+            Logger.e("issueDate: " + issueDate);
+            Logger.e("expiryDate: " + expiryDate);
+            Logger.e("dateOfBirth: " + dateOfBirth);
+            Logger.e("fullNameEnglish: " + fullNameEnglish);
+            Logger.e("nationalityEnglish: " + nationalityEnglish);
+
             isReading = false;
             if (status == Constants.SUCCESS && cardPublicData != null) {
                 //Append the details to  the final string..
-                publicDataString.append("\n\nCard Number ="
-                        + cardPublicData.getCardNumber());
+                publicDataString.append("\n\nCard Number =" + cardPublicData.getCardNumber());
                 publicDataString.append("\n\nID Number =" + cardPublicData.getIdNumber());
                 try {
                     printHomeAddressData(cardPublicData.getHomeAddress());
@@ -187,22 +200,18 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
                 txtStatus.appendLog(publicDataString.toString(), LogTextView.LOG_TYPE.SUCCESS);
             } else {
                 if (status == ErrorCode.UNSPECIFIED.getCode()) {
-                    txtStatus.setLog("Error in reading public data from card. \n" + message,
-                            LogTextView.LOG_TYPE.ERROR);
+                    txtStatus.setLog("Error in reading public data from card. \n" + message, LogTextView.LOG_TYPE.ERROR);
                 } else {
-                    txtStatus.setLog("Error Code : " + status + "\nError in reading public data from card. \n" + message,
-                            LogTextView.LOG_TYPE.ERROR);
+                    txtStatus.setLog("Error Code : " + status + "\nError in reading public data from card. \n" + message, LogTextView.LOG_TYPE.ERROR);
                 }
-
             }
             if (isNFCMode) {
-                CardReaderConnectionTask cardReaderConnectionTask =
-                        new CardReaderConnectionTask(connectToolkitListener, false);
+                CardReaderConnectionTask cardReaderConnectionTask = new CardReaderConnectionTask(connectToolkitListener, false);
                 cardReaderConnectionTask.execute();
-            }//if()
-        }//onCardReadComplete
+            } // if()
+        } // onCardReadComplete
 
-    };//readerCardDataListener;
+    }; // readerCardDataListener;
 
     @Override
     public void onClick(View view) {
@@ -506,12 +515,11 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
     }
 
 
-    private byte[] readDataFromFile(String fileName)
-    {
+    private byte[] readDataFromFile(String fileName) {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EIDAToolkit/";
 
-        Logger.d("File Path is ::"+path);
-        File file = new File(path+fileName);
+        Logger.d("File Path is ::" + path);
+        File file = new File(path + fileName);
         int size = (int) file.length();
         byte[] bytesDataFromFile = new byte[size];
         try {
@@ -524,18 +532,17 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
             return null;
         } catch (IOException e) {
             e.printStackTrace();
-            return  null;
+            return null;
         }
     }
 
 
-    private String readXMLDataFromFile(String fileName)
-    {
+    private String readXMLDataFromFile(String fileName) {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EIDAToolkit/";
 
-        Logger.d("File Path is ::"+path);
+        Logger.d("File Path is ::" + path);
 
-        File file = new File(path+fileName);
+        File file = new File(path + fileName);
         StringBuilder text = new StringBuilder();
 
         try {
@@ -548,8 +555,7 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
             }
             br.close();
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             //You'll need to add proper error handling here
         }
         return text.toString();

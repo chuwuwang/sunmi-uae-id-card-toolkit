@@ -33,9 +33,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_sample);
         btnReadData = (Button) findViewById(R.id.button);
         btnReadData.setOnClickListener(this);
