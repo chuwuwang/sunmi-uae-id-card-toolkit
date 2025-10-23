@@ -165,30 +165,30 @@ public class PublicDataReadingFragment extends BaseFragment implements View.OnCl
 
             Logger.d("Reading finished with status " + status);
 
-            String idNumber = cardPublicData.getIdNumber();
-            String cardNumber = cardPublicData.getCardNumber();
-            NonModifiablePublicData nonModifiablePublicData = cardPublicData.getNonModifiablePublicData();
-            String gender = nonModifiablePublicData.getGender();
-            String issueDate = nonModifiablePublicData.getIssueDate();
-            String expiryDate = nonModifiablePublicData.getExpiryDate();
-            String dateOfBirth = nonModifiablePublicData.getDateOfBirth();
-            String fullNameEnglish = nonModifiablePublicData.getFullNameEnglish();
-            String nationalityEnglish = nonModifiablePublicData.getNationalityEnglish();
-            Logger.e("idNumber: " + idNumber);
-            Logger.e("cardNumber: " + cardNumber);
-            Logger.e("gender: " + gender);
-            Logger.e("issueDate: " + issueDate);
-            Logger.e("expiryDate: " + expiryDate);
-            Logger.e("dateOfBirth: " + dateOfBirth);
-            Logger.e("fullNameEnglish: " + fullNameEnglish);
-            Logger.e("nationalityEnglish: " + nationalityEnglish);
-
             isReading = false;
             if (status == Constants.SUCCESS && cardPublicData != null) {
                 //Append the details to  the final string..
                 publicDataString.append("\n\nCard Number =" + cardPublicData.getCardNumber());
                 publicDataString.append("\n\nID Number =" + cardPublicData.getIdNumber());
                 try {
+                    String idNumber = cardPublicData.getIdNumber();
+                    String cardNumber = cardPublicData.getCardNumber();
+                    NonModifiablePublicData nonModifiablePublicData = cardPublicData.getNonModifiablePublicData();
+                    String gender = nonModifiablePublicData.getGender();
+                    String issueDate = nonModifiablePublicData.getIssueDate();
+                    String expiryDate = nonModifiablePublicData.getExpiryDate();
+                    String dateOfBirth = nonModifiablePublicData.getDateOfBirth();
+                    String fullNameEnglish = nonModifiablePublicData.getFullNameEnglish();
+                    String nationalityEnglish = nonModifiablePublicData.getNationalityEnglish();
+                    Logger.e("idNumber: " + idNumber);
+                    Logger.e("cardNumber: " + cardNumber);
+                    Logger.e("gender: " + gender);
+                    Logger.e("issueDate: " + issueDate);
+                    Logger.e("expiryDate: " + expiryDate);
+                    Logger.e("dateOfBirth: " + dateOfBirth);
+                    Logger.e("fullNameEnglish: " + fullNameEnglish);
+                    Logger.e("nationalityEnglish: " + nationalityEnglish);
+
                     printHomeAddressData(cardPublicData.getHomeAddress());
                     printModifiableData(cardPublicData.getModifiablePublicData());
                     printNonModifiableData(cardPublicData.getNonModifiablePublicData());
